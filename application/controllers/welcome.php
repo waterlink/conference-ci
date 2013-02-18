@@ -19,7 +19,10 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->view('welcome_message');
+		// $this->load->view('welcome_message');
+		R::setup('sqlite:/data/db/a.sqlite');
+		$leaflet = R::findOne('leaflet');
+		echo $leaflet->title;
 	}
 }
 
