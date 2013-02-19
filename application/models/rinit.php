@@ -2,6 +2,10 @@
 
 class Rinit extends CI_Model {
 	public function __construct(){
-		R::setup($this->config->item('redbean_connection_string'));
+		global $argv;
+		if ($argv[1] != 'test'){
+			R::setup($this->config->item('redbean_connection_string'));
+		}
 	}
 }
+
