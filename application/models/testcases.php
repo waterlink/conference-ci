@@ -176,31 +176,147 @@ class test_user_getList_skipAndLimit {
 		$this->checks[] = array($id, $user);
 
 		$this->checks = array_reverse($this->checks);
+		$this->provider = array(
+			array(':skip' => 0, ':limit' => 1),
+			array(':skip' => 0, ':limit' => 2),
+			array(':skip' => 0, ':limit' => 5),
+			array(':skip' => 1, ':limit' => 4),
+			array(':skip' => 2, ':limit' => 4),
+			array(':skip' => 4, ':limit' => 1),
+			array(':skip' => 4, ':limit' => 2),
+		);
 	}
 	function test(){
 		$user = new User();
-		$skip = 1;
-		$limit = 2;
-		$got_user = $user->getList($skip, $limit);
-		must(is_array($got_user), 
-			"test_user_getList_skipAndLimit:: it must be list");
-		$cnt = count($got_user);
-		$cnt2 = $limit;
-		must($cnt == $cnt2,
-			"test_user_getList_skipAndLimit:: must be exactly $cnt2 users, but $cnt");
-		for ($i = $skip; $i < $limit + $skip; ++$i){
-			$got_user_curr = $got_user[$i - $skip];
-			debug('got: '.$got_user_curr);
-			$check_user = $this->checks[$i][1];
-			debug('check: '.$check_user);
-			must(
-				$got_user_curr->id == $check_user->id,
-				"test_user_getList:: must be equal: ".$got_user_curr." != ".$check_user
-			);
-			must(
-				$got_user_curr->name == $check_user->name,
-				"test_user_getList:: must be equal: ".$got_user_curr." != ".$check_user
-			);
+		foreach ($this->provider as $data){
+			debug("");
+			$skip = $data[':skip'];
+			$limit = $data[':limit'];
+			$got_user = $user->getList($skip, $limit);
+			must(is_array($got_user), 
+				"test_user_getList_skipAndLimit:: it must be list");
+			$cnt = count($got_user);
+			$cnt2 = $limit;
+			must($cnt == $cnt2,
+				"test_user_getList_skipAndLimit:: must be exactly $cnt2 users, but $cnt");
+			for ($i = $skip; $i < $limit + $skip; ++$i){
+				$got_user_curr = $got_user[$i - $skip];
+				debug('got: '.$got_user_curr);
+				$check_user = $this->checks[$i][1];
+				debug('check: '.$check_user);
+				must(
+					$got_user_curr->id == $check_user->id,
+					"test_user_getList:: must be equal: ".$got_user_curr." != ".$check_user
+				);
+				must(
+					$got_user_curr->name == $check_user->name,
+					"test_user_getList:: must be equal: ".$got_user_curr." != ".$check_user
+				);
+			}
+		}
+		unset($user);
+	}
+	function teardown(){ R::wipe('user'); }
+}
+
+// Filtered list for users (participant/listener; new/email/paid)
+class test_user_getListFiltered {
+	function setup(){
+		R::wipe('user');
+
+		$user = R::dispense('user');
+		$user->name = 'alex';
+		$user->participant = true;
+		$user->state = 'paid';
+		$id = R::store($user);
+		$this->checks[] = array($id, $user);
+
+		$user = R::dispense('user');
+		$user->name = 'dima';
+		$user->participant = false;
+		$user->state = 'emailsent';
+		$id = R::store($user);
+		$this->checks[] = array($id, $user);
+
+		$user = R::dispense('user');
+		$user->name = 'onotole';
+		$user->participant = false;
+		$user->state = 'new';
+		$id = R::store($user);
+		$this->checks[] = array($id, $user);
+
+		$user = R::dispense('user');
+		$user->name = 'alexander';
+		$user->participant = false;
+		$user->state = 'new';
+		$id = R::store($user);
+		$this->checks[] = array($id, $user);
+
+		$user = R::dispense('user');
+		$user->name = 'wolf';
+		$user->participant = true;
+		$user->state = 'new';
+		$id = R::store($user);
+		$this->checks[] = array($id, $user);
+
+		$user = R::dispense('user');
+		$user->name = 'kracken';
+		$user->participant = false;
+		$user->state = 'new';
+		$id = R::store($user);
+		$this->checks[] = array($id, $user);
+
+		$this->checks = array_reverse($this->checks);
+		$this->provider = array(
+			array(':skip' => 0, ':limit' => 5, ':participant' => null, ':state' => null),
+			array(':skip' => 0, ':limit' => 5, ':participant' => null, ':state' => 'new'),
+			array(':skip' => 0, ':limit' => 1, ':participant' => true, ':state' => 'new'),
+			array(':skip' => 0, ':limit' => 2, ':participant' => false, ':state' => 'new'),
+			array(':skip' => 0, ':limit' => 5, ':participant' => false, ':state' => 'emailsent'),
+			array(':skip' => 1, ':limit' => 4, ':participant' => true, ':state' => 'emailsent'),
+			array(':skip' => 2, ':limit' => 4, ':participant' => false, ':state' => 'paid'),
+			array(':skip' => 4, ':limit' => 1, ':participant' => true, ':state' => 'paid'),
+			array(':skip' => 4, ':limit' => 2, ':participant' => false, ':state' => 'new'),
+		);
+	}
+	function test(){
+		$user = new User();
+		foreach ($this->provider as $data){
+			debug("");
+			$skip = $data[':skip'];
+			$limit = $data[':limit'];
+			$participant = $data[':participant'];
+			$state = $data[':state'];
+			$got_user = $user->getListFiltered($participant, $state, $skip, $limit);
+			$checks_filtered = array();
+			for ($i = 0; $i < count($this->checks); ++$i){
+				if (($this->checks[$i][1]->participant == $participant || $participant === null) &&
+					($this->checks[$i][1]->state == $state || $state === null)){
+					$checks_filtered[] = $this->checks[$i];
+				}
+			}
+			for ($i = $skip; $i < $limit + $skip && $i < count($checks_filtered); ++$i){
+				$got_user_curr = $got_user[$i - $skip];
+				debug('got: '.$got_user_curr);
+				$check_user = $checks_filtered[$i][1];
+				debug('check: '.$check_user);
+				must(
+					$got_user_curr->id == $check_user->id,
+					"test_user_getList:: must be equal: ".$got_user_curr." != ".$check_user
+				);
+				must(
+					$got_user_curr->name == $check_user->name,
+					"test_user_getList:: name must be equal: ".$got_user_curr." != ".$check_user
+				);
+				must(
+					$got_user_curr->participant == $check_user->participant,
+					"test_user_getList:: participant must be equal: ".$got_user_curr." != ".$check_user
+				);
+				must(
+					$got_user_curr->state == $check_user->state,
+					"test_user_getList:: state must be equal: ".$got_user_curr." != ".$check_user
+				);
+			}
 		}
 		unset($user);
 	}

@@ -16,9 +16,8 @@ class User extends CI_Model {
 		R::store($user);
 		return $user;
 	}
-	function getList($skip = false, $limit = false){
-		$query = ' 1=1 order by id desc ';
-		$opts = array();
+	function getList($skip = false, $limit = false, $query = ' 1 = 1 ', $opts = array()){
+		$query .= ' order by id desc ';
 		if ($limit){
 			$query .= ' limit :limit ';
 			$opts[':limit'] = $limit;
@@ -33,5 +32,22 @@ class User extends CI_Model {
 			$result[] = $value;
 		}
 		return $result;
+	}
+	function getListFiltered($participant = null, $state = null, $skip = false, $limit = false){
+		$query = ' 1 = 1 ';
+		$opts = array();
+		if ($participant !== null){
+			$query .= ' and participant = :participant ';
+			if ($participant){
+				$opts[':participant'] = "1";
+			} else {
+				$opts[':participant'] = "0";
+			}
+		}
+		if ($state !== null){
+			$query .= ' and state = :state ';
+			$opts[':state'] = $state;
+		}
+		return $this->getList($skip, $limit, $query, $opts);
 	}
 }
