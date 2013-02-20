@@ -5,12 +5,12 @@ class Test extends CI_Controller {
 	public function index(){
 		// test environment init
 		$this->load->model('Tests');
-		$this->load->model('Testcases');
+		$this->load->model('Mbtestcases');
 		// load models for testing
-		$this->load->model('User');
+		$this->load->model('Mbuser');
 
 		// configuring tests
-		debug_turn_on();
+		// debug_turn_on();
 		// run tests
 		runTests();
 	}
