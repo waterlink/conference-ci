@@ -1,5 +1,13 @@
 <?php
 
+class Model_User extends RedBean_SimpleModel {
+	public function update(){
+		$state_allowed_values = array("new", "emailsent", "paid", null);
+		must(in_array($this->state, $state_allowed_values),
+			"Model_User validator:: state must be in ".json_encode($state_allowed_values));
+	}
+}
+
 class User extends CI_Model {
 	function getById($id){
 		$res = R::load('user', $id);

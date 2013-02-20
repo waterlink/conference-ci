@@ -302,22 +302,40 @@ class test_user_getListFiltered {
 				debug('check: '.$check_user);
 				must(
 					$got_user_curr->id == $check_user->id,
-					"test_user_getList:: must be equal: ".$got_user_curr." != ".$check_user
+					"test_user_getListFiltered:: must be equal: ".$got_user_curr." != ".$check_user
 				);
 				must(
 					$got_user_curr->name == $check_user->name,
-					"test_user_getList:: name must be equal: ".$got_user_curr." != ".$check_user
+					"test_user_getListFiltered:: name must be equal: ".$got_user_curr." != ".$check_user
 				);
 				must(
 					$got_user_curr->participant == $check_user->participant,
-					"test_user_getList:: participant must be equal: ".$got_user_curr." != ".$check_user
+					"test_user_getListFiltered:: participant must be equal: ".$got_user_curr." != ".$check_user
 				);
 				must(
 					$got_user_curr->state == $check_user->state,
-					"test_user_getList:: state must be equal: ".$got_user_curr." != ".$check_user
+					"test_user_getListFiltered:: state must be equal: ".$got_user_curr." != ".$check_user
 				);
 			}
 		}
+		unset($user);
+	}
+	function teardown(){ R::wipe('user'); }
+}
+
+class test_user_create_wrongState {
+	function setup(){ R::wipe('user'); }
+	function test(){
+		$user = new User();
+		function createUserWithWrongState($args){
+			$user = $args['user'];
+			$user->create(array(
+				'name' => 'alex',
+				'state' => 'wrong_state'
+			));
+		}
+		must_throw('createUserWithWrongState', array('user' => $user),
+			"test_user_create_wrongState:: wrong state must throw exception");
 		unset($user);
 	}
 	function teardown(){ R::wipe('user'); }

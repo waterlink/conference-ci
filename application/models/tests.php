@@ -14,6 +14,15 @@ function must($cond, $desc){
 	}
 }
 
+function must_throw($func, $args, $desc){
+	try {
+		$func($args);
+	} catch (exception $e){
+		return;
+	}
+	throw new Exception($desc);
+}
+
 $debug_is_on = false;
 
 function debug($x){
