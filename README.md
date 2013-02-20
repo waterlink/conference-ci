@@ -5,4 +5,4 @@ Backend part of project
 
 ### TODO
 
- * make filters for users (participant/listener; new/emailsent/paid)
+ * __DONE__ make filters for users (participant/listener; new/emailsent/paid)
