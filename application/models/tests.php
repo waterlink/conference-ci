@@ -2,10 +2,19 @@
 
 class Tests {}
 
-function initTests(){
+function initTests($dbstr = null, $freeze = false){
 	// База в памяти
 	// R::setup('sqlite:/tmp/rtest.sqlite');
-	R::setup();
+	if (!$dbstr){
+		R::setup();
+	} else {
+		echo 'WARNING:: real database'."\n";
+		R::setup($dbstr);
+	}
+	if ($freeze){
+		echo 'WARNING:: freezed scheme'."\n";
+		R::freeze();
+	}
 }
 
 function must($cond, $desc){
@@ -45,15 +54,17 @@ function startsWith($haystack, $needle)
 }
 
 $tests = array();
+$test_names = array();
 $num = 0;
 $ok = 0;
 $inited = false;
+$test_time = null;
 
-function runTests(){
-	global $tests, $num, $ok, $inited;
+function runTests($dbstr = null, $freeze = false){
+	global $tests, $num, $ok, $inited, $test_time, $test_names;
 	if (!$inited){
 		echo "\n";
-		initTests();
+		initTests($dbstr, $freeze);
 		$num = 0;
 		$ok = 0;
 	}
@@ -81,18 +92,25 @@ function runTests(){
 		foreach (get_declared_classes() as $c){
 			if (startsWith($c, 'test_')){
 				$tests[] = new $c();
+				$test_names[] = $c;
 			}
 		}
 	}
 	$inited = true;
 	while ($num < count($tests)){
 		$num++;
-		echo "Test $num...";
 		$test = $tests[$num-1];
+		$test_name = $test_names[$num-1];
+		$test_str = "Test $num: $test_name...";
+		echo $test_str;
 		$test->setup();
 		try {
+			$test_time = -microtime(true);
 			$test->test();
-			echo "OK\n";
+			$test_time += microtime(true);
+			$time_format = sprintf("%%%ds %%.3lf s", 120 - strlen($test_str));
+			$test_time_str = sprintf($time_format, 'OK in', $test_time);
+			echo "$test_time_str\n";
 			$ok++;
 		} catch (exception $e){
 			echo "FAIL\n";

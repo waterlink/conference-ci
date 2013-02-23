@@ -1,0 +1,52 @@
+
+Test 1: test_user_getById...                                                                                       OK in 0.003 s
+Test 2: test_user_getById_notFound...                                                                              OK in 0.001 s
+Test 3: test_user_create...                                                                                        OK in 0.079 s
+Test 4: test_user_getList...                                                                                       OK in 0.002 s
+Test 5: test_user_getList_skipAndLimit...                                                                          OK in 0.012 s
+Test 6: test_user_getListFiltered...                                                                               OK in 0.009 s
+Test 7: test_user_create_wrongState...                                                                             OK in 0.001 s
+Test 8: test_user_update...                                                                                        OK in 0.079 s
+Test 9: test_cookie...                                                                                             OK in 0.000 s
+Test 10: test_cookie_implements_icookie...                                                                         OK in 0.000 s
+Test 11: test_cookie_getCookie...                                                                                  OK in 0.001 s
+Test 12: test_cookie_getCookie_notExists...                                                                        OK in 0.001 s
+Test 13: test_cookie_setCookie...                                                                                  OK in 0.079 s
+Test 14: test_cookie_setCookie_uniqueName...                                                                       OK in 0.156 s
+Test 15: test_cookie_setCookie_getCookie...                                                                        OK in 0.079 s
+Test 16: test_auth_setupCookie...                                                                                  OK in 0.000 s
+Test 17: test_auth_setupCookie_wrongCookieClass...                                                                 OK in 0.000 s
+Test 18: test_auth_isGuest_notAuthenticated...                                                                     OK in 0.001 s
+Test 19: test_auth_isGuest_authenticated...                                                                        OK in 0.001 s
+Test 20: test_auth_isLoggedIn...                                                                                   OK in 0.002 s
+Test 21: test_auth_isLoggedIn_whenGuest...                                                                         OK in 0.001 s
+Test 22: test_auth_isLoggedIn_whenLoggedOff...                                                                     OK in 0.078 s
+Test 23: test_auth_isLoggedIn_whenLoggedOff_mustUnsetCookie...                                                     OK in 0.079 s
+Test 24: test_auth_whoIs...                                                                                        OK in 0.004 s
+Test 25: test_auth_whoIs_whenGuest...                                                                              OK in 0.000 s
+Test 26: test_auth_whoIs_whenLoggedOff...                                                                          OK in 0.078 s
+Test 27: test_auth_group_whenGuest...                                                                              OK in 0.001 s
+Test 28: test_auth_group_whenLoggedOff...                                                                          OK in 0.078 s
+Test 29: test_auth_group_whenOperator...                                                                           OK in 0.004 s
+Test 30: test_auth_group_whenAdmin...                                                                              OK in 0.004 s
+Test 31: test_operatorModel_passwordMustStoreAsHash...                                                             OK in 0.079 s
+Test 32: test_auth_login...                                                                                        OK in 0.160 s
+Test 33: test_auth_login_invalidLogin...                                                                           OK in 0.001 s
+Test 34: test_auth_register_whenNoOperatorsExists...                                                               OK in 0.272 s
+Test 35: test_auth_register_whenThereAreOperators_NotLoggedIn...                                                   OK in 0.002 s
+Test 36: test_auth_register_whenThereAreOperators_whenAdmin...                                                     OK in 0.415 s
+Test 37: test_auth_register_whenThereAreOperators_whenOperator...                                                  OK in 0.333 s
+Test 38: test_auth_register_loginIsUnique...                                                                       OK in 0.245 s
+Test 39: test_auth_register_whenThereAreOperators_whenAdmin_createOperator...                                      OK in 0.419 s
+Test 40: test_auth_changePassword...                                                                               OK in 0.655 s
+Test 41: test_auth_changePassword_wrongOldPassword...                                                              OK in 0.578 s
+Test 42: test_auth_logoff...                                                                                       OK in 0.412 s
+Test 43: test_auth_resetPassword_whenAdmin...                                                                      OK in 0.322 s
+Test 44: test_auth_resetPassword_whenNotAdmin...                                                                   OK in 0.455 s
+Test 45: test_auth_defaultCookieIsCI...                                                                            OK in 0.000 s
+Test 46: test_auth...                                                                                              OK in 0.000 s
+Test 47: test_test_runTests...                                                                                     OK in 0.000 s
+
+=========================
+Passed: 47 / 47
+

@@ -58,4 +58,7 @@ class User extends CI_Model {
 		}
 		return $this->getList($skip, $limit, $query, $opts);
 	}
+	function update($bean){
+		R::store($bean);
+	}
 }
