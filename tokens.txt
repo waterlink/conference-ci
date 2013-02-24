@@ -1,0 +1,87 @@
+T_AND_EQUAL	&=
+T_ARRAY	array()
+T_ARRAY_CAST	(array)
+T_AS	as
+T_BOOLEAN_AND	&&
+T_BOOLEAN_OR	||
+T_BOOL_CAST	(bool) or (boolean)
+T_BREAK	break
+T_CALLABLE	callable
+T_CASE	case
+T_CATCH	catch
+T_CLONE	clone
+T_CONCAT_EQUAL	.=
+T_CONSTANT_ENCAPSED_STRING	"foo" or 'bar'
+T_CONTINUE	continue
+T_CURLY_OPEN	{$
+T_DEC	--
+T_DIV_EQUAL	/=
+T_DNUMBER	0.12, etc
+T_DO	do
+T_DOLLAR_OPEN_CURLY_BRACES	${
+T_DOUBLE_ARROW	=>
+T_DOUBLE_CAST	(real), (double) or (float)
+T_DOUBLE_COLON	::
+T_ECHO	echo
+T_ELSE	else
+T_ELSEIF	elseif
+T_EMPTY	empty
+T_ENCAPSED_AND_WHITESPACE	" $a"
+T_ENDFOR	endfor
+T_ENDFOREACH	endforeach
+T_ENDIF	endif
+T_ENDSWITCH	endswitch
+T_ENDWHILE	endwhile
+T_END_HEREDOC	 
+T_EVAL	eval()
+T_EXIT	exit or die
+T_FINAL	final
+T_FOR	for
+T_FOREACH	foreach
+T_GOTO	goto
+T_HALT_COMPILER	__halt_compiler()
+T_IF	if
+T_INC	++
+T_INSTANCEOF	instanceof
+T_INSTEADOF	insteadof
+T_INT_CAST	(int) or (integer)
+T_ISSET	isset()
+T_IS_EQUAL	==
+T_IS_GREATER_OR_EQUAL	>=
+T_IS_IDENTICAL	===
+T_IS_NOT_EQUAL	!= or <>
+T_IS_NOT_IDENTICAL	!==
+T_IS_SMALLER_OR_EQUAL	<=
+T_LIST	list()
+T_LNUMBER	123, 012, 0x1ac, etc
+T_LOGICAL_AND	and
+T_LOGICAL_OR	or
+T_LOGICAL_XOR	xor
+T_MINUS_EQUAL	-=
+T_MOD_EQUAL	%=
+T_MUL_EQUAL	*=
+T_NEW	new
+T_NUM_STRING	"$a[0]"
+T_OBJECT_CAST	(object)
+T_OBJECT_OPERATOR	->
+T_OR_EQUAL	|=
+T_PAAMAYIM_NEKUDOTAYIM	::
+T_PLUS_EQUAL	+=
+T_PRINT	print()
+T_RETURN	return
+T_SL	<<
+T_SL_EQUAL	<<=
+T_SR	>>
+T_SR_EQUAL	>>=
+T_START_HEREDOC	<<<
+T_STRING	"parent"
+T_STRING_CAST	(string)
+T_STRING_VARNAME	"${a
+T_SWITCH	switch
+T_THROW	throw
+T_TRY	try
+T_UNSET	unset()
+T_UNSET_CAST	(unset)
+T_VARIABLE	$foo
+T_WHILE	while
+T_XOR_EQUAL	^=

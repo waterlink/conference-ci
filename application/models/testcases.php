@@ -1404,6 +1404,42 @@ class test_auth_defaultCookieIsCI {
 	}
 }
 
+class test_auth_resetPassword_whenAdmin_noSuchOperator {
+	function setup(){
+		R::wipe('auth');
+		R::wipe('operator');
+		R::wipe('testcookie');
+
+		$this->cookie = new Cookie();
+
+		$auth = new Auth();
+		$auth->setupCookie($this->cookie);
+
+		$auth->register('alex', 'helloworld');
+		$auth->login('alex', 'helloworld');
+
+		// No such operator
+		// $auth->register('opuser', 'opuser');
+	}
+	function test(){
+		$auth = new Auth();
+		$auth->setupCookie($this->cookie);
+
+		must(!$auth->resetPassword('opuser', 'testing'),
+			"test_auth_resetPassword_whenAdmin_noSuchOperator:: auth->resetPassword must return false when there is no such operator");
+		must(!$auth->login('opuser', 'opuser'),
+			"test_auth_resetPassword_whenAdmin_noSuchOperator:: old password must not login cause no such operator");
+		must(!$auth->login('opuser', 'testing'),
+			"test_auth_resetPassword_whenAdmin_noSuchOperator:: new password must not login cause no such operator");
+		unset($auth);
+	}
+	function teardown(){
+		R::wipe('auth');
+		R::wipe('operator');
+		R::wipe('testcookie');
+	}
+}
+
 class test_auth {
 	function setup(){
 		R::wipe('auth');
@@ -1415,6 +1451,260 @@ class test_auth {
 	function teardown(){
 		R::wipe('auth');
 	}
+}
+
+class test_restController {
+	function setup(){}
+	function test(){
+		$rest = new REST_Controller();
+		must(is_a($rest, 'CI_Controller'),
+			"test_restController:: REST_Controller must implement CI_Controller");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_restController_restTest_extendsRestController {
+	function setup(){}
+	function test(){
+		$rest = new rest_test();
+		must(is_a($rest, 'CI_Controller'),
+			"test_restController_restTest_extendsRestController:: rest_test must implement CI_Controller");
+		must(is_a($rest, 'REST_Controller'),
+			"test_restController_restTest_extendsRestController:: rest_test must extend REST_Controller");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_request_implementsIRequest {
+	function setup(){}
+	function test(){
+		$request = new Request();
+		must(is_a($request, 'IRequest'),
+			"test_request_implementsIRequest:: Request must implement IRequest");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_request_method {
+	function setup(){}
+	function test(){
+		$request = new Request();
+		$request->data['method'] = 'put';
+		must($request->method() == 'put',
+			"test_request_method:: request method mismatch");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_request_get {
+	function setup(){}
+	function test(){
+		$request = new Request();
+		$request->data['get']['hello'] = 'world';
+		must($request->get('hello') == 'world',
+			"test_request_get:: request get mismatch");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_request_get_default {
+	function setup(){}
+	function test(){
+		$request = new Request();
+		// $request->data['get']['hello'] = 'world';
+		must($request->get('hello') === null,
+			"test_request_get_default:: request get must return null");
+		must($request->get('hello', 'world') == 'world',
+			"test_request_get_default:: request get must return default");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_request_post {
+	function setup(){}
+	function test(){
+		$request = new Request();
+		$request->data['post']['hello'] = 'world';
+		must($request->post('hello') == 'world',
+			"test_request_post:: request post mismatch");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_request_post_default {
+	function setup(){}
+	function test(){
+		$request = new Request();
+		// $request->data['post']['hello'] = 'world';
+		must($request->post('hello') === null,
+			"test_request_post_default:: request post must return null");
+		must($request->post('hello', 'world') == 'world',
+			"test_request_post_default:: request post must return default");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_restController_setupRequest {
+	function setup(){}
+	function test(){
+		$rest = new REST_Controller();
+		$rest->setupRequest(new Request());
+		must(is_a($rest->getRequestObject(), 'Request'),
+			"test_restController_setupRequest:: request object must be of class Request");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_requestCI_implementsIRequest_extendsCIModel {
+	function setup(){}
+	function test(){
+		$request = new Request_CI(null);
+		must(is_a($request, 'IRequest'),
+			"test_requestCI_implementsIRequest_extendsCIModel:: request_ci must implement IRequest");
+		unset($request);
+	}
+	function teardown(){}
+}
+
+class test_restController_hasRequestCI_byDefault {
+	function setup(){}
+	function test(){
+		$rest = new REST_Controller();
+		must(is_a($rest->getRequestObject(), 'Request_CI'),
+			"test_restController_hasRequestCI_byDefault:: request object must be of class Request_CI");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_restController_restTest_getMethod {
+	function setup(){
+		$this->request = new Request();
+
+		$this->request->data['get']['hello'] = 'world';
+	}
+	function test(){
+		$rest = new rest_test();
+		$rest->setupRequest($this->request);
+		ob_start();
+		$rest->hello();
+		$got = ob_get_contents();
+		ob_clean();
+		ob_end_flush();
+		must($got == json_encode(array(
+				'result' => 'get world')),
+			"test_restController_restTest_getMethod:: must return json with result => get world");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_restController_restTest_putMethod {
+	function setup(){
+		$this->request = new Request();
+
+		$this->request->data['method'] = 'put';
+		$this->request->data['post'] = json_encode(array(
+			'hello' => 'world'
+		));
+	}
+	function test(){
+		$rest = new rest_test();
+		$rest->setupRequest($this->request);
+		ob_start();
+		$rest->hello();
+		$got = ob_get_contents();
+		ob_clean();
+		ob_end_flush();
+		must($got == json_encode(array(
+				'result' => 'put world')),
+			"test_restController_restTest_putMethod:: must return json with result => put world");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_restController_restTest_deleteMethod {
+	function setup(){
+		$this->request = new Request();
+
+		$this->request->data['method'] = 'delete';
+		$this->request->data['post'] = json_encode(array(
+			'hello' => 'world'
+		));
+	}
+	function test(){
+		$rest = new rest_test();
+		$rest->setupRequest($this->request);
+		ob_start();
+		$rest->hello();
+		$got = ob_get_contents();
+		ob_clean();
+		ob_end_flush();
+		must($got == json_encode(array(
+				'result' => 'delete world')),
+			"test_restController_restTest_deleteMethod:: must return json with result => delete world");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_restController_restTest_postMethod {
+	function setup(){
+		$this->request = new Request();
+
+		$this->request->data['method'] = 'post';
+		$this->request->data['post'] = json_encode(array(
+			'hello' => 'world'
+		));
+	}
+	function test(){
+		$rest = new rest_test();
+		$rest->setupRequest($this->request);
+		ob_start();
+		$rest->hello();
+		$got = ob_get_contents();
+		ob_clean();
+		ob_end_flush();
+		must($got == json_encode(array(
+				'result' => 'post world')),
+			"test_restController_restTest_postMethod:: must return json with result => post world");
+		unset($rest);
+	}
+	function teardown(){}
+}
+
+class test_restController_restTest_unknownMethod {
+	function setup(){
+		$this->request = new Request();
+
+		$this->request->data['method'] = 'bga';
+		$this->request->data['post'] = json_encode(array(
+			'hello' => 'world'
+		));
+	}
+	function test(){
+		$rest = new rest_test();
+		$rest->setupRequest($this->request);
+		ob_start();
+		$rest->hello();
+		$got = ob_get_contents();
+		ob_clean();
+		ob_end_flush();
+		must(!$got,
+			"test_restController_restTest_postMethod:: must return nothing");
+		unset($rest);
+	}
+	function teardown(){}
 }
 
 class test_test_runTests {
