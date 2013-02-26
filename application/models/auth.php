@@ -183,6 +183,13 @@ class Model_Operator extends RedBean_SimpleModel {
 	function update(){
 		$this->password = Model_Operator::hashPassword($this->password);
 	}
+	function delete(){
+		$auth = new Auth();
+		$group = $auth->group();
+		must(in_array('admin', $group),
+			"You are not allowed to delete operators");
+		unset($auth);
+	}
 }
 
 class Cookie_CI extends CI_Model implements ICookie {
@@ -198,7 +205,7 @@ class Cookie_CI extends CI_Model implements ICookie {
 		return $value;
 	}
 	// sets cookie
-	public function setCookie($name, $value, $extra = array('secure' => true)){
+	public function setCookie($name, $value, $extra = array('secure' => false, 'expire' => 86500)){
 		$data = $extra;
 		$data['name'] = $name;
 		$data['value'] = $value;

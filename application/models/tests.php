@@ -23,12 +23,6 @@ function initTests($dbstr = null, $freeze = false){
 	}
 }
 
-function must($cond, $desc){
-	if (!$cond){
-		throw new Exception($desc);
-	}
-}
-
 function must_throw($func, $args, $desc){
 	try {
 		$func($args);

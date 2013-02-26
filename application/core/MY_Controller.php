@@ -70,7 +70,13 @@ class REST_Controller extends CI_Controller {
 			$method = 'get';
 		}
 		if (method_exists($this, $name.'_'.$method)){
-			$res = call_user_func(array($this, $name.'_'.$method));
+			try {
+				$res = call_user_func_array(array($this, $name.'_'.$method), $args);
+			} catch (exception $e) {
+				$res = array(
+					'error' => $e->getMessage()
+				);
+			}
 			echo json_encode($res);
 		} else {
 			// return parent::_remap($name, $args);
@@ -197,6 +203,7 @@ class Request_CI implements IRequest {
 	// returns request post
 	public function post($name, $default = null){
 		if (!$this->ci->input->post()){
+			$HTTP_RAW_POST_DATA = file_get_contents("php://input");
 			return $HTTP_RAW_POST_DATA;
 		}
 		$res = $this->ci->input->post($name, true);

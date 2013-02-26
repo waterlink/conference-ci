@@ -10,3 +10,4 @@ application/logs/*
 
 *.code.coverage
 *.code.hashes
+test_operator

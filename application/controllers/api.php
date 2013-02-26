@@ -53,12 +53,12 @@ class Api extends REST_Controller {
 	}
 	public function index_post($operator = null){
 		if (!$operator){
-			$this->Auth->register(
+			return $this->Auth->register(
 				$this->post('login'),
 				$this->post('password')
 			);
 		} else {
-			$this->Auth->login(
+			return $this->Auth->login(
 				$operator,
 				$this->post('password')
 			);
@@ -66,5 +66,23 @@ class Api extends REST_Controller {
 	}
 	public function index_delete(){
 		$this->Auth->logoff();
+	}
+	public function operator_get(){
+		$operators = R::findAll('operator');
+		foreach($operators as &$operator){
+			$operator = $operator->export();
+		}
+		return $operators;
+	}
+	public function operator_delete($id = null){
+		if ($id){
+			$bean = R::findOne('operator', $id);
+			R::trash($bean);
+		} else {
+			R::wipe('operator');
+		}
+	}
+	public function auth_get(){
+		return $this->input->cookie('auth');
 	}
 }
