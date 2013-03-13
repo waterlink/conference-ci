@@ -5,6 +5,28 @@ class Model_User extends RedBean_SimpleModel {
 		$status_allowed_values = array("new", "emailsent", "paid", null);
 		must(in_array($this->status, $status_allowed_values),
 			"Model_User validator:: status must be in ".json_encode($status_allowed_values));
+		// check if we have already that email in db
+		$got = R::findOne("user", 
+			" email = :email ", 
+			array(
+				":email" => $this->email
+			));
+		must(!$got,
+			"Model_User validator:: duplicate email");
+	}
+	public function open(){
+		$auth = new Auth();
+		$group = $auth->group();
+		must(in_array('operator', $group),
+			"You are not allowed to view users");
+		unset($auth);
+	}
+	public function delete(){
+		$auth = new Auth();
+		$group = $auth->group();
+		must(in_array('admin', $group),
+			"You are not allowed to remove users");
+		unset($auth);
 	}
 }
 
