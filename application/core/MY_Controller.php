@@ -30,6 +30,23 @@ function objectToArray($d) {
 		return $d;
 	}
 }
+
+function objectsToArray($list){
+	if ($list){
+		foreach ($list as &$obj){
+			$obj = objectToArray($obj);
+		}
+	}
+	return $list;
+}
+
+function beansToList($list){
+	if ($list){
+		return objectsToArray(R::exportAll($list));
+	}
+	return $list;
+}
+
 function arrayToObject($d) {
 	if (is_array($d)) {
 		/*
@@ -88,25 +105,25 @@ class REST_Controller extends CI_Controller {
 	}
 	public function post($name = null){
 		if (!$name){
-			return objectToArray(json_decode($this->request->post(null)));
+			return objectToArray(($this->request->post(null)));
 		} else {
-			$data = objectToArray(json_decode($this->request->post(null)));
+			$data = objectToArray(($this->request->post(null)));
 			return $data[$name];
 		}
 	}
-	public function put(){
+	public function put($name = null){
 		if (!$name){
-			return objectToArray(json_decode($this->request->post(null)));
+			return objectToArray(($this->request->post(null)));
 		} else {
-			$data = objectToArray(json_decode($this->request->post(null)));
+			$data = objectToArray(($this->request->post(null)));
 			return $data[$name];
 		}
 	}
-	public function delete(){
+	public function delete($name = null){
 		if (!$name){
-			return objectToArray(json_decode($this->request->post(null)));
+			return objectToArray(($this->request->post(null)));
 		} else {
-			$data = objectToArray(json_decode($this->request->post(null)));
+			$data = objectToArray(($this->request->post(null)));
 			return $data[$name];
 		}
 	}
@@ -175,11 +192,16 @@ class Request implements IRequest {
 	public function post($name, $default = null){
 		if (is_array($this->data['post'])){
 			if (isset($this->data['post'][$name])){
-				return $this->data['post'][$name];
+				$r = $this->data['post'];
+				return $r[$name];
 			}
 			return $default;
 		} else {
-			return $this->data['post'];
+			$r = json_decode($this->data['post']);
+			if ($name){
+				return $r[$name];
+			}
+			return $r;
 		}
 	}
 }
@@ -204,7 +226,12 @@ class Request_CI implements IRequest {
 	public function post($name, $default = null){
 		if (!$this->ci->input->post()){
 			$HTTP_RAW_POST_DATA = file_get_contents("php://input");
-			return $HTTP_RAW_POST_DATA;
+			$res = json_decode($HTTP_RAW_POST_DATA);
+			if ($name){
+				return $res[$name];
+			} else {
+				return $res;
+			}
 		}
 		$res = $this->ci->input->post($name, true);
 		if ($res === false){

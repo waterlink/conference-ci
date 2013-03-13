@@ -227,56 +227,56 @@ class test_user_getListFiltered {
 		$user = R::dispense('user');
 		$user->name = 'alex';
 		$user->participant = true;
-		$user->state = 'paid';
+		$user->status = 'paid';
 		$id = R::store($user);
 		$this->checks[] = array($id, $user);
 
 		$user = R::dispense('user');
 		$user->name = 'dima';
 		$user->participant = false;
-		$user->state = 'emailsent';
+		$user->status = 'emailsent';
 		$id = R::store($user);
 		$this->checks[] = array($id, $user);
 
 		$user = R::dispense('user');
 		$user->name = 'onotole';
 		$user->participant = false;
-		$user->state = 'new';
+		$user->status = 'new';
 		$id = R::store($user);
 		$this->checks[] = array($id, $user);
 
 		$user = R::dispense('user');
 		$user->name = 'alexander';
 		$user->participant = false;
-		$user->state = 'new';
+		$user->status = 'new';
 		$id = R::store($user);
 		$this->checks[] = array($id, $user);
 
 		$user = R::dispense('user');
 		$user->name = 'wolf';
 		$user->participant = true;
-		$user->state = 'new';
+		$user->status = 'new';
 		$id = R::store($user);
 		$this->checks[] = array($id, $user);
 
 		$user = R::dispense('user');
 		$user->name = 'kracken';
 		$user->participant = false;
-		$user->state = 'new';
+		$user->status = 'new';
 		$id = R::store($user);
 		$this->checks[] = array($id, $user);
 
 		$this->checks = array_reverse($this->checks);
 		$this->provider = array(
-			array(':skip' => 0, ':limit' => 5, ':participant' => null, ':state' => null),
-			array(':skip' => 0, ':limit' => 5, ':participant' => null, ':state' => 'new'),
-			array(':skip' => 0, ':limit' => 1, ':participant' => true, ':state' => 'new'),
-			array(':skip' => 0, ':limit' => 2, ':participant' => false, ':state' => 'new'),
-			array(':skip' => 0, ':limit' => 5, ':participant' => false, ':state' => 'emailsent'),
-			array(':skip' => 1, ':limit' => 4, ':participant' => true, ':state' => 'emailsent'),
-			array(':skip' => 2, ':limit' => 4, ':participant' => false, ':state' => 'paid'),
-			array(':skip' => 4, ':limit' => 1, ':participant' => true, ':state' => 'paid'),
-			array(':skip' => 4, ':limit' => 2, ':participant' => false, ':state' => 'new'),
+			array(':skip' => 0, ':limit' => 5, ':participant' => null, ':status' => null),
+			array(':skip' => 0, ':limit' => 5, ':participant' => null, ':status' => 'new'),
+			array(':skip' => 0, ':limit' => 1, ':participant' => true, ':status' => 'new'),
+			array(':skip' => 0, ':limit' => 2, ':participant' => false, ':status' => 'new'),
+			array(':skip' => 0, ':limit' => 5, ':participant' => false, ':status' => 'emailsent'),
+			array(':skip' => 1, ':limit' => 4, ':participant' => true, ':status' => 'emailsent'),
+			array(':skip' => 2, ':limit' => 4, ':participant' => false, ':status' => 'paid'),
+			array(':skip' => 4, ':limit' => 1, ':participant' => true, ':status' => 'paid'),
+			array(':skip' => 4, ':limit' => 2, ':participant' => false, ':status' => 'new'),
 		);
 	}
 	function test(){
@@ -286,12 +286,12 @@ class test_user_getListFiltered {
 			$skip = $data[':skip'];
 			$limit = $data[':limit'];
 			$participant = $data[':participant'];
-			$state = $data[':state'];
-			$got_user = $user->getListFiltered($participant, $state, $skip, $limit);
+			$status = $data[':status'];
+			$got_user = $user->getListFiltered($participant, $status, $skip, $limit);
 			$checks_filtered = array();
 			for ($i = 0; $i < count($this->checks); ++$i){
 				if (($this->checks[$i][1]->participant == $participant || $participant === null) &&
-					($this->checks[$i][1]->state == $state || $state === null)){
+					($this->checks[$i][1]->status == $status || $status === null)){
 					$checks_filtered[] = $this->checks[$i];
 				}
 			}
@@ -313,8 +313,8 @@ class test_user_getListFiltered {
 					"test_user_getListFiltered:: participant must be equal: ".$got_user_curr." != ".$check_user
 				);
 				must(
-					$got_user_curr->state == $check_user->state,
-					"test_user_getListFiltered:: state must be equal: ".$got_user_curr." != ".$check_user
+					$got_user_curr->status == $check_user->status,
+					"test_user_getListFiltered:: status must be equal: ".$got_user_curr." != ".$check_user
 				);
 			}
 		}
@@ -323,19 +323,19 @@ class test_user_getListFiltered {
 	function teardown(){ R::wipe('user'); }
 }
 
-class test_user_create_wrongState {
+class test_user_create_wrongstatus {
 	function setup(){ R::wipe('user'); }
 	function test(){
 		$user = new User();
-		function createUserWithWrongState($args){
+		function createUserWithWrongstatus($args){
 			$user = $args['user'];
 			$user->create(array(
 				'name' => 'alex',
-				'state' => 'wrong_state'
+				'status' => 'wrong_status'
 			));
 		}
-		must_throw('createUserWithWrongState', array('user' => $user),
-			"test_user_create_wrongState:: wrong state must throw exception");
+		must_throw('createUserWithWrongstatus', array('user' => $user),
+			"test_user_create_wrongstatus:: wrong status must throw exception");
 		unset($user);
 	}
 	function teardown(){ R::wipe('user'); }

@@ -2,9 +2,9 @@
 
 class Model_User extends RedBean_SimpleModel {
 	public function update(){
-		$state_allowed_values = array("new", "emailsent", "paid", null);
-		must(in_array($this->state, $state_allowed_values),
-			"Model_User validator:: state must be in ".json_encode($state_allowed_values));
+		$status_allowed_values = array("new", "emailsent", "paid", null);
+		must(in_array($this->status, $status_allowed_values),
+			"Model_User validator:: status must be in ".json_encode($status_allowed_values));
 	}
 }
 
@@ -41,7 +41,7 @@ class User extends CI_Model {
 		}
 		return $result;
 	}
-	function getListFiltered($participant = null, $state = null, $skip = false, $limit = false){
+	function getListFiltered($participant = null, $status = null, $skip = false, $limit = false){
 		$query = ' 1 = 1 ';
 		$opts = array();
 		if ($participant !== null){
@@ -52,9 +52,9 @@ class User extends CI_Model {
 				$opts[':participant'] = "0";
 			}
 		}
-		if ($state !== null){
-			$query .= ' and state = :state ';
-			$opts[':state'] = $state;
+		if ($status !== null){
+			$query .= ' and status = :status ';
+			$opts[':status'] = $status;
 		}
 		return $this->getList($skip, $limit, $query, $opts);
 	}

@@ -8,14 +8,18 @@ class Api extends REST_Controller {
 	}
 	public function user_get($id = null){
 		if ($id){
-			return $this->User->getById($id);
+			$res = $this->User->getById($id);
+			if ($res){
+				$res = $res->export();
+			}
+			return $res;
 		}
-		return $this->User->getListFiltered(
+		return beansToList($this->User->getListFiltered(
 			$this->get('participant'),
 			$this->get('state'),
 			$this->get('skip'),
 			$this->get('limit')
-		);
+		));
 	}
 	public function user_put($id){
 		$this->User->create($this->put());
@@ -68,11 +72,7 @@ class Api extends REST_Controller {
 		$this->Auth->logoff();
 	}
 	public function operator_get(){
-		$operators = R::findAll('operator');
-		foreach($operators as &$operator){
-			$operator = $operator->export();
-		}
-		return $operators;
+		return R::exportAll(R::findAll('operator'));
 	}
 	public function operator_delete($id = null){
 		if ($id){
