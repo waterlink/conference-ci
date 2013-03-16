@@ -16,13 +16,15 @@ class Api extends REST_Controller {
 		}
 		return beansToList($this->User->getListFiltered(
 			$this->get('participant'),
-			$this->get('state'),
+			$this->get('status'),
 			$this->get('skip'),
 			$this->get('limit')
 		));
 	}
 	public function user_put($id){
-		$this->User->create($this->put());
+		$put = $this->put();
+		$put["id"] = $id;
+		$this->User->create($put);
 	}
 	public function user_post(){
 		$data = $this->post();

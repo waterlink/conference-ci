@@ -7,9 +7,10 @@ class Model_User extends RedBean_SimpleModel {
 			"Model_User validator:: status must be in ".json_encode($status_allowed_values));
 		// check if we have already that email in db
 		$got = R::findOne("user", 
-			" email = :email ", 
+			" email = :email and id != :id ", 
 			array(
-				":email" => $this->email
+				":email" => $this->email,
+				":id" => $this->id
 			));
 		must(!$got,
 			"Model_User validator:: duplicate email");
