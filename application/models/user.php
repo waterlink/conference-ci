@@ -39,11 +39,19 @@ class User extends CI_Model {
 		}
 		return $res;
 	}
+	function _insensitiveFields($user){
+		$user->lowerName = mb_strtolower($user->name);
+		$user->lowerSurname = mb_strtolower($user->surname);
+		$user->lowerPatronymic = mb_strtolower($user->patronymic);
+		$user->email = mb_strtolower($user->email);
+		return $user;
+	}
 	function create($vars){
 		$user = R::dispense('user');
 		foreach ($vars as $key => $value){
 			$user->$key = $value;
 		}
+		$user = User::_insensitiveFields($user);
 		R::store($user);
 		return $user;
 	}
@@ -64,9 +72,10 @@ class User extends CI_Model {
 		}
 		return $result;
 	}
-	function getListFiltered($participant = null, $status = null, $skip = false, $limit = false){
+	function getListFiltered($participant = null, $status = null, $skip = false, $limit = false, $words = array()){
 		$query = ' 1 = 1 ';
 		$opts = array();
+		$wordsCount = min(count($words), 3);
 		if ($participant !== null){
 			$query .= ' and participant = :participant ';
 			if ($participant){
@@ -75,13 +84,57 @@ class User extends CI_Model {
 				$opts[':participant'] = "0";
 			}
 		}
+		if ($wordsCount > 0){
+			for ($i = 0; $i < $wordsCount; ++$i){
+				$query .= ' and ( 0 = 1 ';
+					foreach (array('lowerName', 'lowerSurname', 'lowerPatronymic') as $field){
+						$query .= " or $field like :word$i ";
+					}
+				$query .= ' ) ';
+				$opts[":word$i"] = $words[$i].'%';
+			}
+		}
 		if ($status !== null){
 			$query .= ' and status = :status ';
 			$opts[':status'] = $status;
 		}
+		// if ($wordsCount) var_dump(array(':query' => $query, ':opts' => $opts));
 		return $this->getList($skip, $limit, $query, $opts);
 	}
 	function update($bean){
 		R::store($bean);
 	}
+}
+
+class Migrations {
+
+	function removeDuplicateEmails(){
+		$flag = false;
+		while (!$flag){
+			$flag = true;
+			foreach (R::findAll("user") as $user){
+				$got = R::find("user", 
+					" email = :email and id != :id ", 
+					array(
+						":email" => $user->email,
+						":id" => $user->id
+					));
+				if ($got) foreach ($got as $duplicate){
+					$flag = false;
+					R::trash($duplicate);
+				}
+				if (!$flag) break;
+				echo ".";
+			}
+		}
+	}
+
+	function lowerCaseNameSurnamePatronymic(){
+		foreach (R::findAll("user") as $user){
+			$user = User::_insensitiveFields($user);
+			R::store($user);
+			echo ".";
+		}
+	}
+
 }

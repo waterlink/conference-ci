@@ -14,11 +14,16 @@ class Api extends REST_Controller {
 			}
 			return $res;
 		}
+		$words = $this->get('words');
+		if (!$words){
+			$words = array();
+		}
 		return beansToList($this->User->getListFiltered(
 			$this->get('participant'),
 			$this->get('status'),
 			$this->get('skip'),
-			$this->get('limit')
+			$this->get('limit'),
+			$words
 		));
 	}
 	public function user_put($id){
