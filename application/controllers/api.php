@@ -79,17 +79,25 @@ class Api extends REST_Controller {
 		$this->Auth->logoff();
 	}
 	public function operator_get(){
+		if (!in_array("admin", $this->Auth->group())){
+			return array("error" => "Access denied");
+		}
 		return R::exportAll(R::findAll('operator'));
 	}
 	public function operator_delete($id = null){
+		if (!in_array("admin", $this->Auth->group())){
+			return array("error" => "Access denied");
+		}
 		if ($id){
-			$bean = R::findOne('operator', $id);
-			R::trash($bean);
+			$bean = R::load('operator', $id);
+			if ($bean && !$bean->admin){
+				R::trash($bean);
+			}
 		} else {
-			R::wipe('operator');
+			// R::wipe('operator');
 		}
 	}
-	public function auth_get(){
-		return $this->input->cookie('auth');
-	}
+	// public function auth_get(){
+	// 	return $this->input->cookie('auth');
+	// }
 }

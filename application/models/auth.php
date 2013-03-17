@@ -89,7 +89,7 @@ class Auth extends CI_Model {
 		if ($operator){
 			return false;
 		}
-		$count = R::count('operator');
+		$count = R::count('operator', ' admin ');
 		if ($count > 0){
 			$group = $this->group();
 			if (!in_array('admin', $group)){
