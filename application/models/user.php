@@ -58,12 +58,14 @@ class User extends CI_Model {
 	function getList($skip = false, $limit = false, $query = ' 1 = 1 ', $opts = array()){
 		$query .= ' order by id desc ';
 		if ($limit){
-			$query .= ' limit :limit ';
-			$opts[':limit'] = $limit;
+			$limit = preg_replace("[^0-9]", "", $limit);
+			$query .= " limit $limit ";
+			// $opts[':limit'] = $limit;
 		}
 		if ($skip){
-			$query .= ' offset :skip ';
-			$opts[':skip'] = $skip;
+			$skip = preg_replace("[^0-9]", "", $skip);
+			$query .= " offset $skip ";
+			// $opts[':skip'] = $skip;
 		}
 		$res = R::find('user', $query, $opts);
 		$result = array();
