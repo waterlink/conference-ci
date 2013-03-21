@@ -28,8 +28,10 @@ class Api extends REST_Controller {
 	}
 	public function user_put($id){
 		$put = $this->put();
-		$put["id"] = $id;
-		$this->User->create($put);
+		// $put["id"] = $id;
+		// $bean = R::dispense("user");
+		// $bean->import($put);
+		$this->User->update($put, $id);
 	}
 	public function user_post(){
 		$data = $this->post();

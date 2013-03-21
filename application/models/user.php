@@ -103,8 +103,14 @@ class User extends CI_Model {
 		// if ($wordsCount) var_dump(array(':query' => $query, ':opts' => $opts));
 		return $this->getList($skip, $limit, $query, $opts);
 	}
-	function update($bean){
-		R::store($bean);
+	function update($bean, $id = false){
+		if (!$id){
+			R::store($bean);
+		} else {
+			$obj = R::load("user", $id);
+			$obj->import($bean);
+			R::store($obj);
+		}
 	}
 }
 
