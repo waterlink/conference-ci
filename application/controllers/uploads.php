@@ -127,7 +127,7 @@ class Uploads extends CI_Controller {
 		}
 		$id = $user->uploadId;
 		chdir("files/$id");
-		$zipFile = $uid."-".$user->surname.'_'.$user->name.'_'.$user->patronymic.'.zip';
+		$zipFile = "../".$uid."-".$user->surname.'_'.$user->name.'_'.$user->patronymic.'.zip';
 		$dirToZip = '*';
 		$fail = false;
 		$zipArchive = new ZipArchive();
