@@ -92,6 +92,7 @@ class Uploads extends CI_Controller {
 		// ini_set("upload_max_filesize", "30M");
 		$this->load->model('User');
 		$this->load->model('Auth');
+        $this->config->load('uploads');
 	}
 	public function index($id = false){
 		if (!$id){
@@ -127,7 +128,11 @@ class Uploads extends CI_Controller {
 		}
 		$id = $user->uploadId;
 		chdir("files/$id");
-		$zipFile = "../".$uid."-".$user->surname.'_'.$user->name.'_'.$user->patronymic.'.zip';
+        if ($this->config->item("use_fio_in_download_archive_name")){
+            $zipFile = "../".$uid."-".$user->surname.'_'.$user->name.'_'.$user->patronymic.'.zip';
+        } else {
+            $zipFile = "../".$uid."-archive.zip";
+        }
 		$dirToZip = '*';
 		$fail = false;
 		$zipArchive = new ZipArchive();
