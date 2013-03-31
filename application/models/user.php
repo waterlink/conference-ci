@@ -1,7 +1,13 @@
 <?php
 
+$validating = false;
+
 class Model_User extends RedBean_SimpleModel {
+//    private $validating = false;
 	public function update(){
+        global $validating;
+        if ($validating){ return; }
+        $validating = true;
 		$status_allowed_values = array("new", "emailsent", "paid", null);
 		must(in_array($this->status, $status_allowed_values),
 			"Model_User validator:: status must be in ".json_encode($status_allowed_values));
@@ -14,21 +20,30 @@ class Model_User extends RedBean_SimpleModel {
 			));
 		must(!$got,
 			"Model_User validator:: duplicate email");
+        $validating = false;
 	}
 	public function open(){
+        global $validating;
+        if ($validating){ return; }
+        $validating = true;
 		$auth = new Auth();
 		$group = $auth->group();
 		must(in_array('operator', $group),
 			"You are not allowed to view users");
 		unset($auth);
+        $validating = false;
 	}
 	public function delete(){
+        global $validating;
+        if ($validating){ return; }
+        $validating = true;
 		$auth = new Auth();
 		$group = $auth->group();
 		must(in_array('admin', $group),
 			"You are not allowed to remove users");
 		unset($auth);
-	}
+	    $validating = false;
+    }
 }
 
 class User extends CI_Model {

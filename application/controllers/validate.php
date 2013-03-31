@@ -21,7 +21,14 @@ class Validate extends CI_Controller {
 		if ($user) {
 			$user->validation = true;
 			R::store($user);
-			redirect("../templates/valid.html", "refresh");
+            if (array_key_exists('HTTPS', $_SERVER)) {
+                $protocol = ($_SERVER['HTTPS'] != "off") ? "https" : "http";
+            } else {
+                $protocol = "http";
+            }
+			redirect($protocol."://".$_SERVER["HTTP_HOST"]."/templates/valid.html");
+            #echo "redirecting..";
+            #echo http_redirect("/templates/valid.html", array(), false, HTTP_REDIRECT_FOUND);
 		} else {
 			echo "Go to hell, mr Hacker ! :)";
 		}
