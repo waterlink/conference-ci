@@ -7,8 +7,9 @@ class Migrate extends CI_Controller {
 		$this->load->model('Auth');
 	}
 	public function index(){
-		Migrations::removeDuplicateEmails();
-		Migrations::lowerCaseNameSurnamePatronymic();
+		// Migrations::removeDuplicateEmails();
+		// Migrations::lowerCaseNameSurnamePatronymic();
+		Migrations::oldIsValidated();
 	}
 }
 

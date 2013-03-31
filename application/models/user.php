@@ -51,12 +51,32 @@ class User extends CI_Model {
 		foreach ($vars as $key => $value){
 			$user->$key = $value;
 		}
+		$needEmailValidation = !$user->id;
 		$user = User::_insensitiveFields($user);
 		R::store($user);
+		if ($needEmailValidation) {
+			$this->config->load("mailgun");
+			$this->load->library("Mailgun", $this->config->item("mailgun"));
+			$user->validation = false;
+			$user->validationcode = hash('sha256', time() + rand());
+			R::store($user);
+			if (array_key_exists('HTTPS', $_SERVER)) {
+				$protocol = ($_SERVER['HTTPS'] != "off") ? "https" : "http";
+			} else {
+				$protocol = "http";
+			}
+			// $protocol = (in_array('HTTPS', $_SERVER) && $_SERVER['HTTPS'] != "off") ? "https" : "http";
+  			$base = $protocol . "://" . $_SERVER['HTTP_HOST'];
+  			$link = $base . "/validate?code=".$user->validationcode;
+			$subject = $this->load->view("registration_title", "", true);
+			$text = $this->load->view("registration_text", array("user" => $user, "link" => $link), true);
+			$html = $this->load->view("registration_message", array("user" => $user, "link" => $link), true);
+			$this->mailgun->send_complex_message($user->email, false, $subject, $text, $html);
+		}
 		return $user;
 	}
 	function getList($skip = false, $limit = false, $query = ' 1 = 1 ', $opts = array()){
-		$query .= ' order by id desc ';
+		$query .= ' and validation order by id desc ';
 		if ($limit){
 			$limit = preg_replace("[^0-9]", "", $limit);
 			$query .= " limit $limit ";
@@ -140,6 +160,15 @@ class Migrations {
 	function lowerCaseNameSurnamePatronymic(){
 		foreach (R::findAll("user") as $user){
 			$user = User::_insensitiveFields($user);
+			R::store($user);
+			echo ".";
+		}
+	}
+
+	function oldIsValidated(){
+		foreach (R::findAll("user") as $user){
+			$user->validation = true;
+			$user->validationcode = hash('sha256', time() + rand());
 			R::store($user);
 			echo ".";
 		}

@@ -173,7 +173,7 @@ class Uploads extends CI_Controller {
 		$fail = True;
 	}
 	//echo "fail=";
-	if ($fail){ echo "true;"; } else { echo "false;"; }
+	// if ($fail){ echo "true;"; } else { echo "false;"; }
 
 	//echo "closing=start;";
 	$zipArchive->close();
