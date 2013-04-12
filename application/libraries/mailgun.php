@@ -13,11 +13,18 @@ class Mailgun {
 
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 		curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v2/'.$this->config[":domain"].'/messages');
+		$bcc = $this->config[":bcc"];
+		$beans = R::findAll("operator");
+		foreach ($beans as $bean){
+			if ($bean->email){
+				array_push($bcc, $bean->email);
+			}
+		}
 		$data = array(
 			'from' => $this->config[":from"],
 			'to' => $to,
 			// 'cc' => $cc,
-			'bcc' => $this->config[":bcc"],
+			'bcc' => $bcc,
 			'subject' => $subject,
 			'text' => $text,
 			'html' => $html
