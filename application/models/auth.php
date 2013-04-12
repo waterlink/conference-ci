@@ -82,7 +82,7 @@ class Auth extends CI_Model {
 		$this->cookie->setCookie('auth', $session);
 		return true;
 	}
-	public function register($login, $password){
+	public function register($login, $password, $email){
 		$operator = R::findOne('operator',
 			' login = :login ',
 			array(':login' => $login));
@@ -99,6 +99,7 @@ class Auth extends CI_Model {
 		$operator = R::dispense('operator');
 		$operator->login = $login;
 		$operator->password = $password;
+		$operator->email = $email;
 		if ($count == 0){
 			$operator->admin = true;
 		}

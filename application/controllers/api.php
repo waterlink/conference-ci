@@ -68,7 +68,8 @@ class Api extends REST_Controller {
 		if (!$operator){
 			return $this->Auth->register(
 				$this->post('login'),
-				$this->post('password')
+				$this->post('password'),
+				$this->post("email")
 			);
 		} else {
 			return $this->Auth->login(
@@ -85,6 +86,25 @@ class Api extends REST_Controller {
 			return array("error" => "Access denied");
 		}
 		return R::exportAll(R::findAll('operator'));
+	}
+	public function operator_put($login = null){
+		if (!in_array("admin", $this->Auth->group())){
+			return array("error" => "Access denied");
+		}
+		$newEmail = $this->put("email");
+		if (!$newEmail){
+			return array("error" => "Email must be specified");
+		}
+		if ($login){
+			$bean = R::findOne("operator", 
+				" login = :login ",
+				array(":login" => $login));
+			if ($bean){
+				$bean->email = $newEmail;
+				R::store($bean);
+				return true;
+			}
+		}
 	}
 	public function operator_delete($id = null){
 		if (!in_array("admin", $this->Auth->group())){
