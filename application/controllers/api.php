@@ -122,4 +122,22 @@ class Api extends REST_Controller {
 	// public function auth_get(){
 	// 	return $this->input->cookie('auth');
 	// }
+	public function settings_get(){
+		$bean = R::findOne("settings");
+		if ($bean){
+			return $bean->export();
+		}
+		return false;
+	}
+	public function settings_put(){
+		if (!in_array("admin", $this->Auth->group())){
+			return array("error" => "Access denied");
+		}
+		$bean = R::findOne("settings");
+		if (!$bean){
+			$bean = R::dispense("settings");
+		}
+		$bean->import($this->put());
+		R::store($bean);
+	}
 }
