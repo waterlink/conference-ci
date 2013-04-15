@@ -99,6 +99,7 @@ class Auth extends CI_Model {
 		$operator = R::dispense('operator');
 		$operator->login = $login;
 		$operator->password = $password;
+		$operator->hashed = false;
 		$operator->email = $email;
 		if ($count == 0){
 			$operator->admin = true;
@@ -112,6 +113,7 @@ class Auth extends CI_Model {
 			return false;
 		}
 		$operator->password = $new;
+		$operator->hashed = false;
 		R::store($operator);
 		return true;
 	}
@@ -137,6 +139,7 @@ class Auth extends CI_Model {
 			return false;
 		}
 		$operator->password = $new;
+		$operator->hashed = false;
 		R::store($operator);
 		return true;
 	}
@@ -182,7 +185,10 @@ class Model_Operator extends RedBean_SimpleModel {
 		return hash('sha256', $password);
 	}
 	function update(){
-		$this->password = Model_Operator::hashPassword($this->password);
+		if (!$this->hashed){
+			$this->password = Model_Operator::hashPassword($this->password);
+			$this->hashed = true;
+		}
 	}
 	function delete(){
 		$auth = new Auth();
